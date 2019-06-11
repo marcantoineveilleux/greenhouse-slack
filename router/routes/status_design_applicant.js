@@ -50,9 +50,10 @@ router.post('/', function (req, res) {
   var isRD = departmentName == 'Community';
 
   var usersIds = _.map(interviewers, interviewer => interviewer.id)
-  var emails = harvestApi.getEmails(usersIds)
+  harvestApi.getEmails(usersIds)
+    .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
  
-  slackConnector.ensureGroupExistsWithMembers(channelName, emails)
+  
   
 });
 

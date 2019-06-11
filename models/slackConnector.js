@@ -33,9 +33,9 @@ function getChannelList(cursor = undefined) {
     var slackInterviewers = {};
     return Promise
     .all(_.map(emails, email => slack.users.lookupByEmail({token: slackToken, email: email})
-        .then(response => {slackInterviewers[email] = response.user.id})))
+        .then(response => {slackInterviewers[response.user.id] = email})))
     .then(() => {
-      return Object.values(slackInterviewers);
+      return slackInterviewers;
     })
   }
 
@@ -58,9 +58,11 @@ function getChannelList(cursor = undefined) {
       }
 
       return chain.then(() => {            
-          return emailsToUserIds(emails).then(slackIds => {
+          return emailsToUserIds(emails).then(slackIdToEmails => {
+            var slackIds = Object.keys(slackIdToEmails)
             return Promise.all(_.map(slackIds, slackId => {
-              return slack.groups.invite({token: slackToken, user: slackId, channel: channel.id})
+              console.log('Inviting ' + slackId + ' to ' + channel.name)
+              return slack.groups.invite({token: slackToken, user: slackId, channel: channel.id}).catch(e =>  console.log('Could not invite ' + slackIdToEmails[slackId] + ' (' + slackId + ') to ' + channel.name + '.' + e))
             }))              
           })
         })        
