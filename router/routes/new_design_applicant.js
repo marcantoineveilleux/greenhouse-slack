@@ -5,7 +5,6 @@ var router = express.Router();
 
 // Variables for Slack incoming webhook url
 var GREENHOUSE_EVENT_SLACK_WEBHOOK_URL = process.env.GREENHOUSE_EVENT_SLACK_WEBHOOK_URL;
-var slack = require('slack-notify')(GREENHOUSE_EVENT_SLACK_WEBHOOK_URL);
 
 router.post('/', function (req, res) {
   // Makes the Greenhouse webhook test ping gods pleased
@@ -75,7 +74,7 @@ router.post('/', function (req, res) {
   // Check if job is one of the designJobs before sending to Slack
   isDesignJob = designJobs.indexOf(jobId) > -1;
   if (isDesignJob) {
-    slack.send({
+    /*slack.send({
       channel: '#design-candidates',
       color: '#7CD197',
       icon_emoji: ':eyes:',
@@ -93,7 +92,7 @@ router.post('/', function (req, res) {
           ]
         }
       ]
-    });
+    });*/
   }
 });
 
