@@ -12,7 +12,7 @@ router.post('/', function (req, res) {
 
   // Store JSON payload from Greenhouse
     var json = req.body;
-  console.log(json)
+  console.log(JSON.stringify(json))
 
   var application = json.payload.application;
   var candidate = application.candidate;
@@ -22,7 +22,7 @@ router.post('/', function (req, res) {
   var candidateId = candidate.id;
   var candidateName = candidate.first_name + " " + candidate.last_name;
   var idAsString = candidate.id.toString()
-  var channelName = "inter_" + candidate.first_name[0] + candidate.last_name.substring(0, 13) + idAsString[idAsString.length-1];
+  var channelName = "iv_" + candidate.first_name.substring(0, 3) + '_' + candidate.last_name.substring(0, 13) + idAsString[idAsString.length-1];
   channelName = channelName.toLocaleLowerCase();
   
   // Application and interview info

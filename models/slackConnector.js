@@ -46,14 +46,15 @@ function getChannelList(cursor = undefined) {
     return getChannelList().then(channels => {
       var chain = Promise.resolve()
       var channel = channels[channelName];
-      if(!channels[channelName]) {
-        chain.then(slack.groups.create(
+      if(!channel) {
+        chain = chain.then(() => slack.groups.create(
           {token: slackToken,
           name: channelName})
           .then(response => {
             channel = response.group
             console.log('Channel created: ' + channel.name + ' (' + channel.id + ')')
           }))
+          .catch(e => console.log(e))
       }
 
       return chain.then(() => {            
