@@ -62,7 +62,7 @@ function getChannelList(cursor = undefined) {
             var slackIds = Object.keys(slackIdToEmails)
             return Promise.all(_.map(slackIds, slackId => {
               console.log('Inviting ' + slackId + ' to ' + channel.name)
-              return slack.groups.invite({token: slackToken, user: slackId, channel: channel.id}).catch(e =>  console.log('Could not invite ' + slackIdToEmails[slackId] + ' (' + slackId + ') to ' + channel.name + '.' + e))
+              return slack.groups.invite({token: slackToken, user: slackId, channel: channel.id}).catch(e =>  console.log('Could not invite ' + slackIdToEmails[slackId] + ' (' + slackId + ') to ' + channel.name + '. ' + e))
             }))              
           })
         })        

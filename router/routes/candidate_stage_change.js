@@ -7,11 +7,9 @@ var harvestApi = require('../../models/harvestApi')
 var _ = require('underscore')
 
 router.post('/', function (req, res) {
-  // Makes the Greenhouse webhook test ping gods pleased
-  res.sendStatus(200);
-
   // Store JSON payload from Greenhouse
-    var json = req.body;
+  var chain = Promise.resolve()
+  var json = req.body;
   console.log(JSON.stringify(json))
 
   var application = json.payload.application;
@@ -32,29 +30,21 @@ router.post('/', function (req, res) {
   var applicationId = application.id;
   var applicationStatus = application.status;
   var interviewStage = application.current_stage.name;
-  var interview = application.current_stage.interviews[0];
-  var interviewStatus = interview.status;
-  var interviewers = interview.interviewers;
-
-  // String mutation for formatting message to Slack
-  var icon = '';
-  var message = '';
-  var color = '';
   var applicationGreenhouseLink = '<https://app.greenhouse.io/people/' + candidateId + '?application_id=' + applicationId + '|View in Greenhouse>';
 
 
-  console.log(message);
+  const interview = application.current_stage.interviews[0]; 
+  if(interview != undefined && interview.interviewers != undefined && interview.interviewers.length > 0) {
+    var interviewers = interview.interviewers;
+    var usersIds = _.map(interviewers, interviewer => interviewer.id)
+    chain = harvestApi.getEmails(usersIds)
+      .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
+  } else {
+    console.log('Stage change doesnt contain any new interviewers.')
+  }
 
-
-  // Check if job is a
-  var isRD = departmentName == 'Community';
-
-  var usersIds = _.map(interviewers, interviewer => interviewer.id)
-  harvestApi.getEmails(usersIds)
-    .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
- 
-  
-  
+   // Makes the Greenhouse webhook test ping gods pleased
+   chain.then(() => res.sendStatus(200));  
 });
 
 
