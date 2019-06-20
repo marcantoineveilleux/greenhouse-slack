@@ -32,8 +32,9 @@ function getChannelList(cursor = undefined) {
   function emailsToUserIds(emails) {
     var slackInterviewers = {};
     return Promise
-    .all(_.map(emails, email => slack.users.lookupByEmail({token: slackToken, email: email})
-        .then(response => {slackInterviewers[response.user.id] = email})))
+    .all(_.map(emails, email => { return slack.users.lookupByEmail({token: slackToken, email: email})
+        .then(response => {slackInterviewers[response.user.id] = email})}))
+        .catch(e => console.log(`Could not find user "${email}" in slack.`))
     .then(() => {
       return slackInterviewers;
     })
@@ -41,8 +42,6 @@ function getChannelList(cursor = undefined) {
 
 
   function ensureGroupExistsWithMembers(channelName, emails) {
-    var channelId;
-   
     return getChannelList().then(channels => {
       var chain = Promise.resolve()
       var channel = channels[channelName];
