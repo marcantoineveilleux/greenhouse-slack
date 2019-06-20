@@ -1,0 +1,13 @@
+{
+    "action": "ping",
+    "payload": {
+      "web_hook_id": 4003110002,
+      "endpoint_url": "https:\/\/greenhouse-to-slack.herokuapp.com\/application_updated\/",
+      "created_at": "2019-06-20T17:08:12Z",
+      "updated_at": "2019-06-20T17:08:12Z",
+      "name": "application_updated",
+      "event": "Application Updated",
+      "active": true,
+      "content-type": "application\/json"
+    }
+  }
