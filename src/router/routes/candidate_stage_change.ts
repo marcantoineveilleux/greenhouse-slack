@@ -24,11 +24,17 @@ router.post('/', function (req, res) {
   var idAsString = candidate.id.toString()
   var channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
   channelName = channelName.toLocaleLowerCase();
+  channelName = channelName.replace(/\s/gi, '')
   
   // Application and interview info
+ // Application and interview info
+ if(jobs[0] !== undefined) {
   var jobName = jobs[0].name;
   var jobId = jobs[0].id;
-  var departmentName = jobs[0].departments[0].name;
+  if(jobs[0].departments[0] != undefined) {
+    var departmentName = jobs[0].departments[0].name;
+  }    
+}
   var applicationId = application.id;
   var applicationStatus = application.status;
   var interviewStage = application.current_stage.name;

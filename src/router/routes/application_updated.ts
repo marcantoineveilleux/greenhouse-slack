@@ -27,9 +27,14 @@ router.post('/', function (req, res) {
   channelName = channelName.toLocaleLowerCase();
   
   // Application and interview info
-  var jobName = jobs[0].name;
-  var jobId = jobs[0].id;
-  var departmentName = jobs[0].departments[0].name;
+  if(jobs[0] !== undefined) {
+    var jobName = jobs[0].name;
+    var jobId = jobs[0].id;
+    if(jobs[0].departments[0] != undefined) {
+      var departmentName = jobs[0].departments[0].name;
+    }    
+  }
+
   var applicationId = application.id;
   var applicationStatus = application.status;
   var interviewStage = application.current_stage.name;
