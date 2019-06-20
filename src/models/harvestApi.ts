@@ -1,7 +1,7 @@
 
 'use strict';
 const superagent = require('superagent');
-const _ = require('underscore')
+var _ = require('underscore')
 const harvestToken = process.env.GREENHOUSE_TOKEN
 
 function getEmails(usersIds) {

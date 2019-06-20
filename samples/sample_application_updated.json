@@ -39,7 +39,13 @@
                 "content": "",
                 "questions":[]
               },
-              "interviewers": []
+              "interviewers": [
+                {
+                  "id": 2622,
+                  "display_name": "Carl Buddha",
+                  "status": "tentative"
+                }
+              ]
             }
           ]
         },

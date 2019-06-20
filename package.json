@@ -2,25 +2,42 @@
   "name": "greenhouse-slack",
   "version": "1.0.0",
   "description": "greenhouse webhooks to slack",
-  "main": "app.js",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && npm run watch",
+    "build": "rm -rf ./dist/* && npm run build-ts",
+    "watch-node": "nodemon ./dist/server.js",
+    "watch-ts": "tsc -w",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,green.bold\"  \"npm run watch-ts\" \"npm run watch-node\"",
+    "build-ts": "tsc",
+    "serve": "node dist/server.js",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
+  },
+  "engines": {
+    "node": "8.11.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/epan/greenhouse-slack.git"
+    "url": "git+https://github.com/marcantoineveilleux/greenhouse-slack.git"
   },
-  "author": "EP",
+  "author": "MAV",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/epan/greenhouse-slack/issues"
+    "url": "https://github.com/marcantoineveilleux/greenhouse-slack/issues"
   },
-  "homepage": "https://github.com/epan/greenhouse-slack#readme",
+  "homepage": "https://github.com/marcantoineveilleux/greenhouse-slack#readme",
   "dependencies": {
+    "@types/node": "^12.0.8",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "slack": "^11.0.2",
     "superagent": "^5.0.7",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.5.2",
     "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0"
   }
 }

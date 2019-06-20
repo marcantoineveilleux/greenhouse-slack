@@ -3,7 +3,7 @@
 // Variables for Slack incoming webhook url
 const slackToken = process.env.SLACK_USER_TOKEN
 const slack = require('slack');
-const _ = require('underscore')
+var _ = require('underscore')
 
 function getChannelList(cursor = undefined) {
     var channels = {};
@@ -32,9 +32,10 @@ function getChannelList(cursor = undefined) {
   function emailsToUserIds(emails) {
     var slackInterviewers = {};
     return Promise
-    .all(_.map(emails, email => { return slack.users.lookupByEmail({token: slackToken, email: email})
-        .then(response => {slackInterviewers[response.user.id] = email})}))
-        .catch(e => console.log(`Could not find user "${email}" in slack.`))
+    .all(_.map(emails, email => slack.users.lookupByEmail({token: slackToken, email: email})
+        .then(response => {slackInterviewers[response.user.id] = email})
+        .catch(e => console.log(`Could not find user "${email}" in slack.`))))
+        
     .then(() => {
       return slackInterviewers;
     })
