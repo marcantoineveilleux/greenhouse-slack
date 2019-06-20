@@ -1,5 +1,7 @@
 'use strict';
 
+import { candidate_stage_change_response } from "greenhouse";
+
 var express = require('express');
 var router = express.Router();
 var slackConnector = require('../../models/slackConnector')
@@ -9,7 +11,7 @@ var _ = require('underscore')
 router.post('/', function (req, res) {
   // Store JSON payload from Greenhouse
   var chain = Promise.resolve()
-  var json = req.body;
+  var json : candidate_stage_change_response = req.body;
   console.log(JSON.stringify(json))
 
   var application = json.payload.application;

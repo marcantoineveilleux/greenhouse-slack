@@ -13,6 +13,8 @@ function getEmails(usersIds) {
             .set('accept', 'json')
             .then(response => {
                 emails[userId] = response.body.emails[0]
+            }).catch(e => {
+                console.log(`Could not get user '${userId}' email.`)
             })
 
     })).then(() => {

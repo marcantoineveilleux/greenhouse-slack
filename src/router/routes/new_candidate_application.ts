@@ -1,5 +1,7 @@
 'use strict';
 
+import { new_candidate_application_response } from "greenhouse";
+
 var express = require('express');
 var router = express.Router();
 
@@ -10,7 +12,7 @@ router.post('/', function (req, res) {
   // Makes the Greenhouse webhook test ping gods pleased
   res.sendStatus(200);
 
-  var json = req.body;
+  var json : new_candidate_application_response = req.body;
 
   // Store JSON payload from Greenhouse
   var application = json.payload.application;
@@ -27,7 +29,7 @@ router.post('/', function (req, res) {
   var jobName = jobs[0].name;
   var jobId = jobs[0].id;
   var applicationId = application.id;
-  var applicationSource = application.source.public_name;
+  var applicationSource = application.source.name;
   var designJobs = [
     123548, // job_name: 'Head of Design'
     122173, // job_name: 'Product Designer'

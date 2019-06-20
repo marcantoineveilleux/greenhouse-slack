@@ -1,4 +1,7 @@
 'use strict';
+import { application_updated_response } from "greenhouse";
+
+ 
 
 var express = require('express');
 var router = express.Router();
@@ -9,7 +12,7 @@ var _ = require('underscore')
 router.post('/', function (req, res) {
   // Store JSON payload from Greenhouse
   var chain = Promise.resolve()
-  var json = req.body;
+  var json : application_updated_response = req.body;
   console.log(JSON.stringify(json))
 
   var application = json.payload.application;
