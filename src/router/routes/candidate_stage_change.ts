@@ -24,8 +24,6 @@ router.post('/', function (req, res) {
         var jobs = application.jobs;
       
         // Candidate info
-        var candidateId = candidate.id;
-        var candidateName = candidate.first_name + " " + candidate.last_name;
         var idAsString = candidate.id.toString()
         var channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
         channelName = channelName.toLocaleLowerCase();
@@ -40,20 +38,26 @@ router.post('/', function (req, res) {
           var departmentName = jobs[0].departments[0].name;
         }    
       }
+       /* 
+        var candidateId = candidate.id;
         var applicationId = application.id;
         var applicationStatus = application.status;
         var interviewStage = application.current_stage.name;
-        var applicationGreenhouseLink = '<https://app.greenhouse.io/people/' + candidateId + '?application_id=' + applicationId + '|View in Greenhouse>';
+        var applicationGreenhouseLink = '<https://app.greenhouse.io/people/' + candidateId + '?application_id=' + applicationId + '|View in Greenhouse>';*/
       
       
-        const interview = application.current_stage.interviews[0]; 
-        if(interview != undefined && interview.interviewers != undefined && interview.interviewers.length > 0) {
-          var interviewers = interview.interviewers;
-          var usersIds = _.map(interviewers, interviewer => interviewer.id)
-          chain = harvestApi.getEmails(usersIds)
-            .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
+        if(application.current_stage != undefined && application.current_stage.interviews != undefined && application.current_stage.interviews.length > 0) {        
+          const interview = application.current_stage.interviews[0]; 
+          if(interview != undefined && interview.interviewers != undefined && interview.interviewers.length > 0) {
+            var interviewers = interview.interviewers;
+            var usersIds = _.map(interviewers, interviewer => interviewer.id)
+            chain = harvestApi.getEmails(usersIds)
+              .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
+          } else {
+            console.log('Stage change doesnt contain any new interviewers.')
+          }
         } else {
-          console.log('Stage change doesnt contain any new interviewers.')
+          console.log('Stage change doesnt contain any new interview.')
         }
       
          // Makes the Greenhouse webhook test ping gods pleased
