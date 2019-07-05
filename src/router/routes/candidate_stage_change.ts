@@ -25,9 +25,18 @@ router.post('/', function (req, res) {
       
         // Candidate info
         var idAsString = candidate.id.toString()
-        var channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
-        channelName = channelName.toLocaleLowerCase();
-        channelName = channelName.replace(/\s/gi, '')
+        var channelName;
+        if(candidate !== undefined && 
+           candidate.first_name !== undefined && 
+           candidate.last_name !== undefined) {        
+          channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
+          channelName = channelName.toLocaleLowerCase();
+          channelName = channelName.replace(/\s/gi, '')
+        } else {
+          console.log('Missing candidate informations.')
+          chain.then(() => res.sendStatus(200));
+          break;
+        }
         
         // Application and interview info
        // Application and interview info
