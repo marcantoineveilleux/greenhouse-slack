@@ -26,9 +26,9 @@ router.post('/', function (req, res) {
         // Candidate info
         var idAsString = candidate.id.toString()
         var channelName;
-        if(candidate !== undefined && 
-           candidate.first_name !== undefined && 
-           candidate.last_name !== undefined) {        
+        if(candidate && 
+           candidate.first_name  && 
+           candidate.last_name) {        
           channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
           channelName = channelName.toLocaleLowerCase();
           channelName = channelName.replace(/\s/gi, '')
@@ -40,7 +40,7 @@ router.post('/', function (req, res) {
         
         // Application and interview info
        // Application and interview info
-       if(jobs[0] !== undefined) {
+       if(jobs[0]) {
         var jobName = jobs[0].name;
         var jobId = jobs[0].id;
         if(jobs[0].departments[0] != undefined) {
