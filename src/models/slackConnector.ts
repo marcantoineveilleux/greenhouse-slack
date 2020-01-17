@@ -77,7 +77,7 @@ function getChannelList(cursor = undefined) {
             var slackIds = Object.keys(slackIdToEmails)
             var usersString = slackIds.join(',');
             console.log('Inviting ' + usersString + ' to ' + channel.name)
-            return slack.conversations.invite({token: slackToken, user: usersString, channel: channel.id}).catch(e =>  console.log('Could not invite ' + Object.entries(slackIdToEmails).join(',') + ' (' + usersString + ') to ' + channel.name + '. ' + e))
+            return slack.conversations.invite({token: slackToken, users: usersString, channel: channel.id}).catch(e =>  console.log('Could not invite ' + Object.entries(slackIdToEmails).join(',') + ' (' + usersString + ') to ' + channel.name + '. ' + e))
           })
         })        
         .catch(e => {
