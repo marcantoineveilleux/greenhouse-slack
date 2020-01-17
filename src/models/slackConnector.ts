@@ -8,25 +8,40 @@ var _ = require('underscore')
 function getChannelList(cursor = undefined) {
     var channels = {};
     return new Promise((resolve) => {
-      slack.groups.list({
+      slack.conversations.list({
         token: slackToken,
-        cursor: cursor
+        cursor: cursor,
+        exclude_archived: true,
+        types: "private_channel"
       }).then(response => {
-        if(response.groups.length > 0) {
-          response.groups.forEach(channel => {
+        console.log(response)
+        if(response.channels.length > 0) {
+          response.channels.forEach(channel => {
             channels[channel.name] = channel;
           });
-          if(!response.response_metadata && !response.response_metadata.next_cursor) {
-            return getChannelList(response.response_metadata.next_cursor);
+          if(response.response_metadata != undefined && response.response_metadata.next_cursor) {
+            return getChannelList(response.response_metadata.next_cursor).then((nextPageChannels) => { _.each(nextPageChannels, channel => channels[channel.name] = channel ) } );
           }
         }      
       }).then(() => {
         resolve(channels);
       }).catch(e => {
         console.log(e)
-      });
-      
+      });      
     })
+  }
+
+  function archiveChannels(channelIds) {
+    if(!channelIds && channelIds.length < 1) {
+      return
+    }
+
+    const delayIncrement = 500;
+    let delay = 0;
+
+    return Promise.all(_.map(channelIds, channelId => {
+      return slack.conversations.archive({token: slackToken, channel: channelId})
+    }))
   }
 
   function emailsToUserIds(emails) {
@@ -34,8 +49,7 @@ function getChannelList(cursor = undefined) {
     return Promise
     .all(_.map(emails, email => slack.users.lookupByEmail({token: slackToken, email: email})
         .then(response => {slackInterviewers[response.user.id] = email})
-        .catch(e => console.log(`Could not find user "${email}" in slack.`))))
-        
+        .catch(e => console.log(`Could not find user "${email}" in slack.`))))        
     .then(() => {
       return slackInterviewers;
     })
@@ -47,11 +61,12 @@ function getChannelList(cursor = undefined) {
       var chain = Promise.resolve()
       var channel = channels[channelName];
       if(!channel) {
-        chain = chain.then(() => slack.groups.create(
+        chain = chain.then(() => slack.conversations.create(
           {token: slackToken,
-          name: channelName})
+          name: channelName,
+          is_private: true})
           .then(response => {
-            channel = response.group
+            channel = response.conversation
             console.log('Channel created: ' + channel.name + ' (' + channel.id + ')')
           }))
           .catch(e => console.log(e))
@@ -60,10 +75,9 @@ function getChannelList(cursor = undefined) {
       return chain.then(() => {            
           return emailsToUserIds(emails).then(slackIdToEmails => {
             var slackIds = Object.keys(slackIdToEmails)
-            return Promise.all(_.map(slackIds, slackId => {
-              console.log('Inviting ' + slackId + ' to ' + channel.name)
-              return slack.groups.invite({token: slackToken, user: slackId, channel: channel.id}).catch(e =>  console.log('Could not invite ' + slackIdToEmails[slackId] + ' (' + slackId + ') to ' + channel.name + '. ' + e))
-            }))              
+            var usersString = slackIds.join(',');
+            console.log('Inviting ' + usersString + ' to ' + channel.name)
+            return slack.conversations.invite({token: slackToken, user: usersString, channel: channel.id}).catch(e =>  console.log('Could not invite ' + Object.entries(slackIdToEmails).join(',') + ' (' + usersString + ') to ' + channel.name + '. ' + e))
           })
         })        
         .catch(e => {
@@ -74,5 +88,7 @@ function getChannelList(cursor = undefined) {
   
 
   module.exports = {
-    ensureGroupExistsWithMembers: ensureGroupExistsWithMembers
+    ensureGroupExistsWithMembers: ensureGroupExistsWithMembers,
+    getChannelList: getChannelList,
+    archiveChannels: archiveChannels
 };
