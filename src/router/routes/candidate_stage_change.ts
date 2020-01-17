@@ -23,13 +23,12 @@ router.post('/', function (req, res) {
         var candidate = application.candidate;
         var jobs = application.jobs;
       
-        // Candidate info
-        var idAsString = candidate.id.toString()
+        // Candidate info        
         var channelName;
         if(candidate && 
            candidate.first_name  && 
            candidate.last_name) {        
-          channelName = `iv_${candidate.first_name}_${candidate.last_name}_${idAsString}`;
+          channelName = `iv_${candidate.first_name}_${candidate.last_name}_${candidate.id.toString()}`;
           channelName = channelName.toLocaleLowerCase();
           channelName = channelName.replace(/\s/gi, '_')
         } else {
