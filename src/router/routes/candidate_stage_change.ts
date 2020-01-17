@@ -29,9 +29,9 @@ router.post('/', function (req, res) {
         if(candidate && 
            candidate.first_name  && 
            candidate.last_name) {        
-          channelName = `iv_${candidate.first_name.substring(0, 3)}_${candidate.last_name.substring(0, 12)}_${idAsString[idAsString.length-1]}`;
+          channelName = `iv_${candidate.first_name}_${candidate.last_name}_${idAsString}`;
           channelName = channelName.toLocaleLowerCase();
-          channelName = channelName.replace(/\s/gi, '')
+          channelName = channelName.replace(/\s/gi, '_')
         } else {
           console.log('Missing candidate informations.')
           chain.then(() => res.sendStatus(200));
