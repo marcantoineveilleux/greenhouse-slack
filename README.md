@@ -4,14 +4,18 @@
 ## What it does
 
 1. Takes webhook events in Greenhouse
-2. Forms a Slack message and posts it to a Slack channel
-3. Can filter for specific job IDs
+2. Create a Slack message and invite people.
 
-## How to get it
 
-1. Make sure you have Developer Permissions so you can see and make webhooks in Greenhouse
-2. Make sure you have permissions to create and modify Slack integrations
-3. Set up a webhook in Greenhouse for both New Application Submitted and Application Status Change
-4. Set up a hosting thing like Heroku
-5. Configure the Slack integration to receive it
-6. Have fun wondering why the steps above are so vague
+## Slack tokens:
+Uses:
+1. slack.conversations.list
+2. slack.conversations.archive
+3. slack.users.lookupByEmail
+4. slack.conversations.create
+5. slack.conversations.invite
+
+Token Scope Needs:
+1. groups:read
+2. groups:write
+3. users:read.email 

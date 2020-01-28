@@ -1,7 +1,7 @@
 'use strict';
 
 // Variables for Slack incoming webhook url
-const slackToken = process.env.SLACK_USER_TOKEN
+const slackToken = process.env.SLACK_BOT_TOKEN
 const slack = require('slack');
 var _ = require('underscore')
 
@@ -14,7 +14,6 @@ function getChannelList(cursor = undefined) {
         exclude_archived: true,
         types: "private_channel"
       }).then(response => {
-        console.log(response)
         if(response.channels.length > 0) {
           response.channels.forEach(channel => {
             channels[channel.name] = channel;
@@ -36,9 +35,6 @@ function getChannelList(cursor = undefined) {
       return
     }
 
-    const delayIncrement = 500;
-    let delay = 0;
-
     return Promise.all(_.map(channelIds, channelId => {
       return slack.conversations.archive({token: slackToken, channel: channelId})
     }))
@@ -59,14 +55,18 @@ function getChannelList(cursor = undefined) {
   function ensureGroupExistsWithMembers(channelName, emails) {
     return getChannelList().then(channels => {
       var chain = Promise.resolve()
-      var channel = channels[channelName];
+      var channel
+      if(channels != undefined) {
+        channel = channels[channelName];
+      }
+      
       if(!channel) {
         chain = chain.then(() => slack.conversations.create(
           {token: slackToken,
           name: channelName,
           is_private: true})
           .then(response => {
-            channel = response.conversation
+            channel = response.channel
             console.log('Channel created: ' + channel.name + ' (' + channel.id + ')')
           }))
           .catch(e => console.log(e))
@@ -76,8 +76,12 @@ function getChannelList(cursor = undefined) {
           return emailsToUserIds(emails).then(slackIdToEmails => {
             var slackIds = Object.keys(slackIdToEmails)
             var usersString = slackIds.join(',');
-            console.log('Inviting ' + usersString + ' to ' + channel.name)
-            return slack.conversations.invite({token: slackToken, users: usersString, channel: channel.id}).catch(e =>  console.log('Could not invite ' + Object.entries(slackIdToEmails).join(',') + ' (' + usersString + ') to ' + channel.name + '. ' + e))
+            var usersDescription = _.map(slackIds, slackId => {
+              return slackIdToEmails[slackId] + ' (' + slackId + ')'
+            }).join(',')
+            
+            console.log('Inviting ' + usersDescription + ' to ' + channel.name)
+            return slack.conversations.invite({token: slackToken, users: usersString, channel: channel.id}).catch(e =>  console.log('Could not invite everyone in ' + usersDescription + ' to ' + channel.name + ' (' + channel.id + '). ' + e))
           })
         })        
         .catch(e => {
