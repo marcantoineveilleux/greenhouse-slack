@@ -18,4 +18,5 @@ Uses:
 Token Scope Needs:
 1. groups:read
 2. groups:write
-3. users:read.email 
+3. users:read
+4. users:read.email 
