@@ -14,7 +14,7 @@ router.post('/cleanup', function (req, res) {
 
         // More then a month old
         var channelsToArchive = _.filter(channels, channel => { return moment.duration(moment(moment.now()).diff(moment(channel.created * 1000, 'x'))).asDays() > ARCHIVE_AFTER_NB_DAYS})
-        channelsToArchive = _.filter(channelsToArchive, channel => channel.name.startsWith('iv_'))
+        channelsToArchive = _.filter(channelsToArchive, channel => channel.name.startsWith('interview_'))
         channelsToArchive = _.filter(channelsToArchive, channel => (channel.is_archived == undefined || !channel.is_archived))
         
         return slackConnector.archiveChannels(_.map(channelsToArchive, channel => channel.id))

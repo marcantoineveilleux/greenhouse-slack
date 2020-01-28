@@ -28,7 +28,7 @@ router.post('/', function (req, res) {
         if(candidate && 
            candidate.first_name  && 
            candidate.last_name) {        
-          channelName = `iv_${candidate.first_name}_${candidate.last_name}_${candidate.id.toString()}`;
+          channelName = `interview_${candidate.first_name}_${candidate.last_name}_${candidate.id.toString()}`;
           channelName = channelName.toLocaleLowerCase();
           channelName = channelName.replace(/\s/gi, '_')
         } else {
