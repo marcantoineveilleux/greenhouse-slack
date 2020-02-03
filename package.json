@@ -30,14 +30,16 @@
     "@types/node": "^12.0.8",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "moment": "^2.24.0",
     "slack": "^11.0.2",
     "superagent": "^5.0.7",
     "tsc": "^1.20150623.0",
     "typescript": "^3.5.2",
     "underscore": "^1.9.1",
-    "moment": "^2.24.0"
+    "concurrently": "^5.1.0"
   },
   "devDependencies": {
+    "tsc-watch": "^4.1.0",
     "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0"
   }
