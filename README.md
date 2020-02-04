@@ -12,7 +12,7 @@
 
 ## Docker
 > docker build -t server .
-> docker run --env GREENHOUSE_TOKEN --env SLACK_BOT_TOKEN  -p 5000:5000 server
+> docker run --env GREENHOUSE_TOKEN --env SLACK_BOT_TOKEN --env "Research and Development"  -p 5000:5000 server
 
 ## Slack tokens scope:
 Uses:

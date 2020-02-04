@@ -6,12 +6,14 @@
   "scripts": {
     "start": "npm run build && npm run watch",
     "build": "rm -rf ./dist/* && npm run build-ts",
+    "debug": "nodemon --watch ./dist --inspect=local.stratus.coveo.com:9222 --nolazy ./dist/server.js",
     "watch-node": "nodemon ./dist/server.js",
-    "watch-ts": "tsc -w",
+    "watch-ts": "tsc -w -p ./src",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,green.bold\"  \"npm run watch-ts\" \"npm run watch-node\"",
     "build-ts": "tsc",
     "serve": "node dist/server.js",
-    "tslint": "tslint -c tslint.json -p tsconfig.json"
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "docker-debug": "docker-compose up"
   },
   "engines": {
     "node": "8.11.4"
@@ -36,7 +38,8 @@
     "tsc": "^1.20150623.0",
     "typescript": "^3.5.2",
     "underscore": "^1.9.1",
-    "concurrently": "^5.1.0"
+    "concurrently": "^5.1.0",
+    "nodemon": "^2.0.2"
   },
   "devDependencies": {
     "tsc-watch": "^4.1.0",

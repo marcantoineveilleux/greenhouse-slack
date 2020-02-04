@@ -52,7 +52,7 @@ function getChannelList(cursor = undefined) {
   }
 
 
-  function ensureGroupExistsWithMembers(channelName, emails) {
+  function ensureGroupExistsWithMembers(channelName, emails, createChannel: boolean) {
     return getChannelList().then(channels => {
       var chain = Promise.resolve()
       var channel
@@ -60,7 +60,7 @@ function getChannelList(cursor = undefined) {
         channel = channels[channelName];
       }
       
-      if(!channel) {
+      if(!channel && createChannel) {
         chain = chain.then(() => slack.conversations.create(
           {token: slackToken,
           name: channelName,
@@ -72,7 +72,9 @@ function getChannelList(cursor = undefined) {
           .catch(e => console.log(e))
       }
 
-      return chain.then(() => {            
+      // if the channel doesn't exist and we should not create a channel
+      if(!channel && !createChannel) {
+        return chain.then(() => {            
           return emailsToUserIds(emails).then(slackIdToEmails => {
             var slackIds = Object.keys(slackIdToEmails)
             var usersString = slackIds.join(',');
@@ -86,7 +88,11 @@ function getChannelList(cursor = undefined) {
         })        
         .catch(e => {
           console.log(e);
-        })      
+        })  
+      } else {
+        console.log(`'${channelName}' doesn't exist and should not be created.`);
+      }
+          
     });
   }
   

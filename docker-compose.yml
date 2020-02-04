@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  web:
+    build: .
+    command: npm run debug
+    volumes:
+      - ./dist:/server/dist
+    ports:
+      - "5000:5000"
+      - "5858:5858"

@@ -2,6 +2,10 @@
 
 import { candidate_stage_change_response } from "greenhouse";
 
+const departmentsFilter = process.env.DEPARTMENTS_FILTER
+var _ = require('underscore')
+
+
 var express = require('express');
 var router = express.Router();
 var slackConnector = require('../../models/slackConnector')
@@ -36,23 +40,21 @@ router.post('/', function (req, res) {
           chain.then(() => res.sendStatus(200));
           break;
         }
-        
-        // Application and interview info
-       // Application and interview info
-       if(jobs[0]) {
-        var jobName = jobs[0].name;
-        var jobId = jobs[0].id;
-        if(jobs[0].departments[0] != undefined) {
-          var departmentName = jobs[0].departments[0].name;
-        }    
-      }
-       /* 
-        var candidateId = candidate.id;
-        var applicationId = application.id;
-        var applicationStatus = application.status;
-        var interviewStage = application.current_stage.name;
-        var applicationGreenhouseLink = '<https://app.greenhouse.io/people/' + candidateId + '?application_id=' + applicationId + '|View in Greenhouse>';*/
-      
+
+        var createChannel = false
+        if(departmentsFilter != undefined) {
+          const departments = _.map(departmentsFilter.split(','), department => department.toLowerCase())
+          _.each(jobs, job => {
+              _.each(job.departments, department => {
+                if(department.name != undefined) {
+                  if(_.contains(departments, department.name.toLowerCase())) {
+                    createChannel = true;
+                  }
+                }                
+              })            
+          })
+        }
+                   
       
         if(application.current_stage != undefined && application.current_stage.interviews != undefined && application.current_stage.interviews.length > 0) {        
           const interview = application.current_stage.interviews[0]; 
@@ -60,7 +62,7 @@ router.post('/', function (req, res) {
             var interviewers = interview.interviewers;
             var usersIds = _.map(interviewers, interviewer => interviewer.id)
             chain = harvestApi.getEmails(usersIds)
-              .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails))
+              .then(emails => slackConnector.ensureGroupExistsWithMembers(channelName, emails, createChannel))
           } else {
             console.log('Stage change doesnt contain any new interviewers.')
           }
@@ -73,10 +75,6 @@ router.post('/', function (req, res) {
          break;
 
   }
-
-  
-
- 
 });
 
 
